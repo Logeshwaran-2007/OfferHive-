@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>✨ Offer Hive – Prototype</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="star">✨</div>
+    <div>
+      <div class="logo-text">Offer Hive</div>
+      <div class="small-muted">Your combo-offer hub</div>
+    </div>
+  </div>
+</header>
+<div class="container">
+
+<!-- LOGIN -->
+<main id="login" class="screen active">
+  <div class="center">
+    <div class="form-box">
+      <h2>Welcome Back</h2>
+      <p class="small-muted">Login with Email or Username</p>
+      <form onsubmit="event.preventDefault(); doLogin();">
+        <label>Email or Username</label>
+        <input id="loginUser" placeholder="you@example.com or username" required>
+        <label>Password</label>
+        <input id="loginPass" type="password" placeholder="Password" required>
+        <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:1rem">
+          <button type="submit" class="btn">Login</button>
+        </div>
+      </form>
+      <p class="small-muted" style="margin-top:.6rem">
+        New here? <button class="back-btn" onclick="goto('choose')">Sign up</button>
+      </p>
+    </div>
+  </div>
+</main>
+
+<!-- CHOOSE YOUR JOURNEY -->
+<main id="choose" class="screen">
+  <div class="center">
+    <h2>Choose Your Journey</h2>
+    <p class="small-muted">Register as a Seller or Customer</p>
+    <div style="display:flex;gap:1rem;margin-top:12px">
+      <button class="btn" onclick="goto('sellerRegister')">I am a Seller</button>
+      <button class="btn" onclick="goto('customerRegister')">I am a Customer</button>
+    </div>
+    <button class="back-btn" style="margin-top:10px" onclick="goto('login')">← Back to Login</button>
+  </div>
+</main>
+
+<!-- SELLER REGISTRATION -->
+<main id="sellerRegister" class="screen">
+  <div class="center">
+    <div class="form-box">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2>Register Your Seller Account</h2>
+        <button class="back-btn" onclick="goto('choose')">← Back</button>
+      </div>
+      <p class="small-muted">Provide shop & bank details to get started.</p>
+      <form id="sellerForm" onsubmit="event.preventDefault(); registerSeller();">
+        <label>Username</label><input id="s_username" required placeholder="Enter username">
+        <label>Phone Number</label><input id="s_phone" required placeholder="+91 9876543210">
+        <label>Email Address</label><input id="s_email" type="email" required placeholder="you@example.com">
+        <hr style="margin:12px 0">
+        <label>Shop Name</label><input id="s_shop" placeholder="The Local Eatery">
+        <label>Shop Address</label><input id="s_address" placeholder="123 Main St">
+        <label>Shop Phone</label><input id="s_shopphone" placeholder="+91 1234567890">
+        <label>Shop Category</label>
+        <select id="s_category">
+          <option value="food">Food</option>
+          <option value="clothing">Clothing</option>
+          <option value="general">General</option>
+        </select>
+        <label>GST Number</label><input id="s_gst" placeholder="22AAAAA0000A1Z5">
+        <hr style="margin:12px 0">
+        <label>Password</label><input id="s_password" type="password" required placeholder="Create a password">
+        <div style="display:flex;justify-content:flex-end;gap:.5rem;margin-top:12px">
+          <button type="button" class="btn secondary" onclick="goto('choose')">Cancel</button>
+          <button class="btn" type="submit">Create Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<!-- CUSTOMER REGISTRATION -->
+<main id="customerRegister" class="screen">
+  <div class="center">
+    <div class="form-box">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2>Create Your Customer Account</h2>
+        <button class="back-btn" onclick="goto('choose')">← Back</button>
+      </div>
+      <p class="small-muted">Join Offer Hive to discover amazing combo deals!</p>
+      <form id="custForm" onsubmit="event.preventDefault(); registerCustomer();">
+        <label>Username</label><input id="c_username" required placeholder="Enter username">
+        <label>Phone Number</label><input id="c_phone" required placeholder="+91 9876543210">
+        <label>Email</label><input id="c_email" type="email" required placeholder="you@example.com">
+        <label>Password</label><input id="c_password" type="password" required placeholder="Create password">
+        <div style="display:flex;justify-content:flex-end;gap:.5rem;margin-top:12px">
+          <button type="button" class="btn secondary" onclick="goto('choose')">Cancel</button>
+          <button class="btn" type="submit">Create Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<!-- SELLER DASHBOARD -->
+<main id="sellerDash" class="screen">
+  <div class="layout">
+    <aside class="sidebar card">
+      <button id="offers_stat" class="stat clickable" style="width:100%" title="View My Offers">Offers</button>
+      <button class="btn" style="width:100%" onclick="openAddOfferModal()">Add Offer</button>
+      <button class="btn secondary" style="width:100%;margin-top:10px" onclick="showSeller('report')">Reports</button>
+      <button class="btn secondary" style="width:100%;margin-top:10px" onclick="logout()">Logout</button>
+    </aside>
+    <section class="content">
+      <div class="topbar">
+        <h2>Seller Dashboard</h2>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="avatar" id="sellerAvatar">S</div>
+          <div>
+            <div id="sellerName" style="font-weight:700">Seller</div>
+            <div class="small-muted" id="sellerShop">Shop</div>
+          </div>
+          <div style="display:flex;flex-direction:row;align-items:center;gap:5px">
+            <button class="btn secondary" title="Edit Profile" style="padding:5px 10px;font-size:1rem" onclick="showSellerProfile()">✎</button>
+            <button class="btn secondary" title="Logout" style="padding:5px 10px;font-size:1rem" onclick="logout()">⎋</button>
+          </div>
+        </div>
+      </div>
+      <div id="seller_stats">
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr;">
+          <div><h3 style="margin:.2rem 0">Total Offers</h3><p id="offers_count">0</p></div>
+          <div><h3 style="margin:.2rem 0">Total Amount</h3><p>₹7,200</p></div>
+          <div><h3 style="margin:.2rem 0">Customers</h3><p>45</p></div>
+        </div>
+      </div>
+      <div id="seller_report" class="hidden" style="margin-top:12px">
+        <h3>Weekly Sales</h3>
+        <div style="width:100%;max-width:340px;">
+          <canvas id="s_bar"></canvas>
+        </div>
+        <h3 style="margin-top:14px">Monthly Update</h3>
+        <div style="width:100%;max-width:340px;">
+          <canvas id="s_pie"></canvas>
+        </div>
+        <div style="margin-top:12px"><button class="btn" onclick="showSeller('stats')">Back</button></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- Offers List Modal -->
+<div id="offers_list_modal" class="hidden">
+  <div class="form-box">
+    <span class="close-btn" onclick="closeOffersListModal()">×</span>
+    <h3>My Offers</h3>
+    <div id="offers_list_content">Loading...</div>
+  </div>
+</div>
+
+<!-- CUSTOMER DASHBOARD -->
+<main id="customerDash" class="screen">
+  <div class="layout">
+    <aside class="sidebar card">
+      <button class="btn" style="width:100%" onclick="showCust('dash')">Dashboard</button>
+      <button class="btn" style="width:100%;margin-top:10px" onclick="showCust('cart')">Cart</button>
+      <button class="btn" style="width:100%;margin-top:10px" onclick="showCust('payment')">Payment</button>
+      <button class="btn" style="width:100%;margin-top:10px" onclick="logout()">Logout</button>
+    </aside>
+    <section class="content">
+      <div class="topbar">
+        <h2>Customer Dashboard</h2>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="avatar" id="custAvatar">C</div>
+          <div>
+            <div id="custName" style="font-weight:700">Customer</div>
+            <div class="small-muted" id="custPhone">—</div>
+          </div>
+          <div style="display:flex;flex-direction:row;align-items:center;gap:5px">
+            <button class="btn secondary" title="Edit Profile" style="padding:5px 10px;font-size:1rem" onclick="showCustomerProfile()">✎</button>
+            <button class="btn secondary" title="Logout" style="padding:5px 10px;font-size:1rem" onclick="logout()">⎋</button>
+          </div>
+        </div>
+      </div>
+      <div id="c_dash">
+        <h3>Products</h3>
+        <input id="productSearch" placeholder="Search..." style="width:220px; margin-bottom:10px; padding:7px 12px; border-radius:8px; border:1px solid #e6e6e6;">
+        <div id="productList" class="grid"></div>
+      </div>
+      <div id="c_details" class="hidden">
+        <button class="back-btn" onclick="showCust('dash')">← Back</button>
+        <div id="detailsContent"></div>
+      </div>
+      <div id="c_cart" class="hidden">
+        <h3>Your Cart</h3>
+        <div id="cartItems"></div>
+        <p id="cartTotal" style="font-weight:700;margin-top:8px"></p>
+        <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:8px">
+          <button class="btn secondary" onclick="showCust('dash')">Continue Shopping</button>
+          <button class="btn" onclick="showCust('payment')">Checkout</button>
+        </div>
+      </div>
+      <div id="c_payment" class="hidden">
+        <h3>Payment</h3>
+        <p id="totalPay" class="small-muted"></p>
+        <label>Payment Method</label>
+        <select id="payMethod" onchange="togglePayment()">
+          <option value="upi">UPI</option>
+          <option value="card">Card</option>
+          <option value="cod">Cash on Delivery</option>
+        </select>
+        <div id="upiBox" style="margin-top:8px"><input id="upiId" placeholder="Enter UPI ID"></div>
+        <div id="cardBox" class="hidden" style="margin-top:8px"><input id="cardNum" placeholder="Card Number"></div>
+        <div id="codBox" class="hidden" style="margin-top:8px"><textarea id="addr" placeholder="Delivery Address"></textarea></div>
+        <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:12px">
+          <button class="btn secondary" onclick="showCust('cart')">Cancel</button>
+          <button class="btn" onclick="confirmPay()">Confirm Payment</button>
+        </div>
+      </div>
+      <div id="c_confirm" class="hidden" style="text-align:center">
+        <h3>✅ Payment Confirmed!</h3>
+        <p class="small-muted">Your order has been placed.</p>
+        <button class="btn" onclick="backToDashboardFromConfirm()">Back to Dashboard</button>
+      </div>
+      <div id="customer_profile_modal" class="hidden">
+        <div class="form-box">
+          <span class="close-btn" onclick="closeCustomerProfileModal()">×</span>
+          <h3>Edit Profile</h3>
+          <label>Name</label><input id="p_name">
+          <label>Email</label><input id="p_email">
+          <label>Phone</label><input id="p_phone">
+          <div style="display:flex;justify-content:flex-end;gap:.5rem;margin-top:.6rem">
+            <button class="btn secondary" onclick="closeCustomerProfileModal()">Cancel</button>
+            <button class="btn" onclick="saveProfile()">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- Seller Profile Modal -->
+<div id="seller_profile_modal" class="hidden">
+  <div class="form-box">
+    <span class="close-btn" onclick="closeSellerProfileModal()">×</span>
+    <h3>Edit Seller Profile</h3>
+    <label>Username</label><input id="sp_username">
+    <label>Email</label><input id="sp_email">
+    <label>Phone</label><input id="sp_phone">
+    <label>Shop Name</label><input id="sp_shop">
+    <label>GST Number</label><input id="sp_gst">
+    <div style="display:flex;justify-content:flex-end;gap:.5rem;margin-top:.6rem">
+      <button class="btn secondary" onclick="closeSellerProfileModal()">Cancel</button>
+      <button class="btn" onclick="saveSellerProfile()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Offer Modal with Image Input -->
+<div id="add_offer_modal" class="hidden">
+  <div class="form-box">
+    <span class="close-btn" onclick="closeAddOfferModal()">×</span>
+    <h3>Add New Offer</h3>
+    <form id="addOfferForm" onsubmit="event.preventDefault(); saveNewOffer();">
+      <label>Offer Title</label>
+      <input id="offer_title" required placeholder="Enter offer title">
+      <label>Description</label>
+      <textarea id="offer_desc" required placeholder="Enter offer description"></textarea>
+      <label>Price (₹)</label>
+      <input id="offer_price" type="number" min="1" required placeholder="Enter price">
+      <label>Category</label>
+      <select id="offer_category" required>
+        <option value="" disabled selected>Select category</option>
+        <option value="food">Food</option>
+        <option value="clothing">Clothing</option>
+        <option value="general">General</option>
+      </select>
+      <label>Offer Image</label>
+      <input id="offer_image" type="file" accept="image/*" />
+      <div style="display:flex;justify-content:flex-end;gap:.5rem;margin-top:12px">
+        <button type="button" class="btn secondary" onclick="closeAddOfferModal()">Cancel</button>
+        <button type="submit" class="btn">Add Offer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Offers List Modal with image display -->
+<div id="offers_list_modal" class="hidden">
+  <div class="form-box">
+    <span class="close-btn" onclick="closeOffersListModal()">×</span>
+    <h3>My Offers</h3>
+    <div id="offers_list_content">Loading...</div>
+  </div>
+</div>
+
+<div class="footer">✨ Offer Hive © 2025</div>
+</div>
+
+<!-- PRODUCT POPUP MODAL -->
+<div id="productModal">
+  <div>
+    <span onclick="closeProductModal()">×</span>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
